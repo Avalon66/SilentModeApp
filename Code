@@ -1,0 +1,81 @@
+package com.example.silentmodetoggle;
+
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.media.AudioManager;
+import android.util.Log;
+import android.widget.ImageView;
+import com.example.silentmodetoggle.util.RingerHelper;
+
+public class MainActivity extends AppCompatActivity {
+
+    AudioManager audioManager;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        //Referenz auf den AudioManager von Android, Sodass wir ihn
+        //zum Umschalten unserer Klingel verwenden können
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        //Initialisierung des Layouts
+        //mit res/layout/activity_main.xml
+        //der layoutdatei mit meinen Views für diese Aktivität
+        setContentView(R.layout.activity_main);
+
+        //view "content" in meiner Layoutdatei suchen
+        FrameLayout contentView =
+                (FrameLayout) findViewById(R.id.content);
+
+        //Einen Click-Listener für die contentview erstellen, die den
+        //kligelstatus des Telefons umschaltet, und dann die UI
+        //aktualisiere, um den neuen Status zu reflektieren
+        contentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                //klingelmodus umschalten. Wenn normal, dann
+                //stummschalten, wenn Stumm, dann das
+                //Gegenteil
+                RingerHelper.performToggle(audioManager);
+
+                //UI aktualisieren, um den neuen Status wiederzugeben
+                updateUi();
+
+            }
+        });
+        //Test
+        Log.d("SilentModeToggle","This is a test");
+    }
+
+    /**
+     * Aktualisieren das Bild auf der UI, das zeigt, ob der
+     * stumme oder der normale Modus aktiv ist
+     */
+    private void updateUi() {
+        //Die View phone_icon in meinenm Layout finden ´. Wir wissen,
+        //dass es sich um eine ImageView im Layout handelt, deshalb
+        //wird sie in eine ImageView übernemmen
+        ImageView imageView = (ImageView) findViewById(R.id.phone_icon);
+
+        //phoneImage auf die ID des Bildes setzen, das anzeigt
+        //ob der Klingelton aktiviert ist oder nicht
+        int phoneImage = RingerHelper.isPhoneSilent(audioManager)
+            ? R.drawable.ringer_off
+                : R.drawable.ringer_on;
+
+        //ImageView auf das Bild des phoneImage setzen
+        imageView.setImageResource(phoneImage);
+
+    }
+    @Override
+    protected void onResume(){
+        super.onResume();
+        //UI aktualisiert, falls sich etwas geändert hat
+        updateUi();
+    }
+}
+
