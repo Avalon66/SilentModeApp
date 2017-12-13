@@ -1,0 +1,28 @@
+package com.example.silentmodetoggle.util;
+import android.media.AudioManager;
+
+/**
+ * Created by yago on 07/12/2017.
+ */
+
+public class RingerHelper {
+    private RingerHelper(){}
+
+
+    public static void performToggle(AudioManager audioManager) {
+        //wenn das Telefon gerade stumm ist, dann laut schalten,
+        //wenn es gerade normal ist, dann stummschalten
+        audioManager.setRingerMode(isPhoneSilent(audioManager)
+                        ? AudioManager.RINGER_MODE_NORMAL
+                        : AudioManager.RINGER_MODE_SILENT);
+        }
+
+    /**Gibt zurück ob sich das Telefon gerade im stummen Modus
+     *Befindet
+     */
+    public static boolean isPhoneSilent(AudioManager audioManager){
+            return audioManager.getRingerMode()
+                    ==AudioManager.RINGER_MODE_SILENT;
+        }
+    }
+
